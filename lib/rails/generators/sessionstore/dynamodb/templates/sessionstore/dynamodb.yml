@@ -69,3 +69,10 @@ secret_key: <%= require 'securerandom'; SecureRandom.hex(64) %>
 # before giving up.
 #
 # lock_max_wait_time: 1
+
+
+# [Boolean] DynamoDB LocalMode
+#  when local_mode: true
+#   endpoint: http://localhost:8000(default)
+#
+# local_mode: false

@@ -68,7 +68,9 @@ module Aws::SessionStore::DynamoDB
       :lock_retry_delay => 500,
       :lock_max_wait_time => 1,
       :secret_key => nil,
-      :verbose => false
+      :verbose => false,
+      :local_mode => false,
+      :local_endpoint => "http://localhost:8000"
     }
 
     # @return [String] Session table name.
@@ -142,6 +144,13 @@ module Aws::SessionStore::DynamoDB
     # @return [false] Run silent, run deep
     attr_reader :verbose
 
+    # @return [true] DynamoDB Local Mode
+    # @return [false] DynamoDB Mode
+    attr_reader :local_mode
+
+    # @return [String] DynamoDB Local EndPoint URL
+    attr_reader :local_endpoint
+
     # Provides configuration object that allows access to options defined
     # during Runtime, in a YAML file, in the ENV and by default.
     #
@@ -190,14 +199,17 @@ module Aws::SessionStore::DynamoDB
     # @option options [String] :secret_key (SecureRandom.hex(64))
     #   Secret key for HMAC encription.
     # @option options [Boolean] :verbose (true)
+    # @option options [Boolean] :local_mode (true)
+    # @option options [String] :local_endpoint (100) Default: http://localhost:8000
     def initialize(options = {})
       @options = default_options.merge(
-      env_options.merge(
+        env_options.merge(
           file_options(options).merge(
             symbolize_keys(options)
-           )
-         )
-       )
+          )
+        )
+      )
+      @options = update_option_dynamodb_local_endpoint(@options) if @option[:local_mode]
       @options = client_error.merge(@options)
       set_attributes(@options)
     end
@@ -208,6 +220,10 @@ module Aws::SessionStore::DynamoDB
     end
 
     private
+
+    def update_option_dynamodb_local_endpoint(options)
+      options[:endpoint] = options[:local_endpoint]
+    end
 
     # @return [Hash] DDB client.
     def gen_dynamo_db_client
