@@ -209,7 +209,7 @@ module Aws::SessionStore::DynamoDB
           )
         )
       )
-      @options = update_option_dynamodb_local_endpoint(@options) if @option[:local_mode]
+      @options = update_option_dynamodb_local_endpoint(@options) if @options[:local_mode]
       @options = client_error.merge(@options)
       set_attributes(@options)
     end
@@ -223,6 +223,7 @@ module Aws::SessionStore::DynamoDB
 
     def update_option_dynamodb_local_endpoint(options)
       options[:endpoint] = options[:local_endpoint]
+      options
     end
 
     # @return [Hash] DDB client.
