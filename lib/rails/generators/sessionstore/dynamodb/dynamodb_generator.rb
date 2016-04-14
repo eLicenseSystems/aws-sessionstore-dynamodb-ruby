@@ -35,7 +35,7 @@ module Sessionstore
 
 
       def copy_sample_config_file
-        file = File.join("sessionstore", "dynamodb.yml")
+        file = File.join("session_store_dynamodb.yml")
         template file, File.join(Rails.root, "config", file)
       end
 

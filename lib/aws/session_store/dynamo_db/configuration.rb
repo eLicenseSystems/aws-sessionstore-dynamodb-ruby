@@ -54,6 +54,8 @@ module Aws::SessionStore::DynamoDB
 
     # Default configuration options
     DEFAULTS = {
+      :access_key_id => nil,
+      :secret_access_key => nil,
       :table_name => "sessions",
       :table_key => "session_id",
       :user_key => nil,
@@ -61,8 +63,8 @@ module Aws::SessionStore::DynamoDB
       :read_capacity => 10,
       :write_capacity => 5,
       :raise_errors => false,
-      # :max_age => 7*3600*24,
-      # :max_stale => 3600*5,
+      :max_age => 7*3600*24,
+      :max_stale => 3600*5,
       :enable_locking => false,
       :lock_expiry_time => 500,
       :lock_retry_delay => 500,
@@ -72,6 +74,9 @@ module Aws::SessionStore::DynamoDB
       :local_mode => false,
       :local_endpoint => "http://localhost:8000"
     }
+
+    attr_reader :access_key_id
+    attr_reader :secret_access_key
 
     # @return [String] Session table name.
     attr_reader :table_name
@@ -203,12 +208,11 @@ module Aws::SessionStore::DynamoDB
     # @option options [String] :local_endpoint (100) Default: http://localhost:8000
     def initialize(options = {})
       @options = default_options.merge(
-        env_options.merge(
-          file_options(options).merge(
-            symbolize_keys(options)
-          )
+        file_options(options).merge(
+          symbolize_keys(options)
         )
       )
+      check_aws_keys!(@options)
       @options = update_option_dynamodb_local_endpoint(@options) if @options[:local_mode]
       @options = client_error.merge(@options)
       set_attributes(@options)
@@ -220,6 +224,11 @@ module Aws::SessionStore::DynamoDB
     end
 
     private
+
+    def check_aws_keys!(options = {})
+      fail 'set config[:access_key_id]' if options[:access_key_id].nil
+      fail 'set config[:secret_access_key]' if options[:secret_access_key].nil
+    end
 
     def update_option_dynamodb_local_endpoint(options)
       options[:endpoint] = options[:local_endpoint]
@@ -266,10 +275,7 @@ module Aws::SessionStore::DynamoDB
 
     # @return [Hash] File options.
     def file_options(options = {})
-      file_path = config_file_path(options)
-      if file_path
-        load_from_file(file_path)
-      elsif rails_defined && File.exists?(rails_config_file_path)
+      if rails_defined && File.exists?(rails_config_file_path)
         load_from_file(rails_config_file_path)
       else
         {}
@@ -285,8 +291,7 @@ module Aws::SessionStore::DynamoDB
     # and possible development stage defined.
     def load_from_file(file_path)
       require "erb"
-      opts = YAML.load(ERB.new(File.read(file_path)).result) || {}
-      opts = opts[Rails.env] if rails_defined && opts.key?(Rails.env)
+      opts = YAML.load(ERB.new(File.read(file_path)).result)[Rails.env] || {}
       symbolize_keys(opts)
     end
 
@@ -297,7 +302,7 @@ module Aws::SessionStore::DynamoDB
 
     # @return [String] Rails configuraton path to YAML file default.
     def rails_config_file_path
-      File.join(Rails.root, "config", "sessionstore/dynamodb.yml")
+      File.join(Rails.root, "config", "session_store_dynamodb.yml")
     end
 
     # Set accessible attributes after merged options.

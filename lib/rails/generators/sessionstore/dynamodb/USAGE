@@ -7,7 +7,7 @@ Example:
 
     This will create:
         db/migrate/VERSION_migration_name.rb
-        config/sessionstore/dynamodb.yml
+        config/session_store_dynamodb.yml
 
     The migration will be run when the command rake db:migrate is run
     in the command line.
