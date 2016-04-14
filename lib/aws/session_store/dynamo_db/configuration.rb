@@ -226,8 +226,10 @@ module Aws::SessionStore::DynamoDB
     private
 
     def check_aws_keys!(options = {})
-      fail 'set config[:access_key_id]' if options[:access_key_id].nil
-      fail 'set config[:secret_access_key]' if options[:secret_access_key].nil
+      val = options[:access_key_id]
+      fail 'set config[:access_key_id]' if val.nil? || val.empty?
+      val = options[:secret_access_key]
+      fail 'set config[:secret_access_key]' if val.nil? || val.empty?
     end
 
     def update_option_dynamodb_local_endpoint(options)
