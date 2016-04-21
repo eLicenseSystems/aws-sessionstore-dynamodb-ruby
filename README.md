@@ -1,4 +1,5 @@
 # Amazon DynamoDB Session Store
+<a href="https://codeclimate.com/github/eLicenseSystems/aws-sessionstore-dynamodb-ruby"><img src="https://codeclimate.com/github/eLicenseSystems/aws-sessionstore-dynamodb-ruby/badges/gpa.svg" /></a>
 
 The **Amazon DynamoDB Session Store** handles sessions for Ruby web applications
 using a DynamoDB backend. The session store is compatible with Rails (3.x or 4.x)
