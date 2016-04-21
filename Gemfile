@@ -22,7 +22,8 @@ group :documentation do
 end
 
 group :test do
-  gem 'rspec', '~> 2.0'
+  gem 'rspec', '~> 3.0'
+  gem 'pry'
   gem 'simplecov', '~> 0.0', :require => false
   gem 'rack-test', '~> 0.0'
 end
