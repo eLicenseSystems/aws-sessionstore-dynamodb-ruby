@@ -1,4 +1,5 @@
 # Amazon DynamoDB Session Store
+[![Build Status](https://travis-ci.org/eLicenseSystems/aws-sessionstore-dynamodb-ruby.svg?branch=master)](https://travis-ci.org/eLicenseSystems/aws-sessionstore-dynamodb-ruby)
 <a href="https://codeclimate.com/github/eLicenseSystems/aws-sessionstore-dynamodb-ruby"><img src="https://codeclimate.com/github/eLicenseSystems/aws-sessionstore-dynamodb-ruby/badges/gpa.svg" /></a>
 
 The **Amazon DynamoDB Session Store** handles sessions for Ruby web applications
