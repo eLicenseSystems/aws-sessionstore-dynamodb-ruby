@@ -41,8 +41,7 @@ module Aws::SessionStore::DynamoDB
     # @api private
     def scan_filter(config)
       hash = {}
-      hash['created_at'] = oldest_date(config.max_age) if config.max_age
-      hash['updated_at'] = oldest_date(config.max_stale) if config.max_stale
+      hash['updated_at'] = oldest_date(config.max_age) if config.max_age
       { :scan_filter => hash }
     end
 

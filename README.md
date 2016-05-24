@@ -129,7 +129,7 @@ You can create your own Rake task for garbage collection similar to below:
 
     desc 'Perform Garbage Collection'
     task :garbage_collect do |t|
-     options = {:max_age => 3600*24, max_stale => 5*3600 }
+     options = {:max_age => 3600*24}
      Aws::SessionStore::DynamoDB::GarbageCollection.collect_garbage(options)
     end
 

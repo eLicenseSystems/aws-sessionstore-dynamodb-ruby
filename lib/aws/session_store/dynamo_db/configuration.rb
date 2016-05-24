@@ -64,7 +64,6 @@ module Aws::SessionStore::DynamoDB
       :write_capacity => 5,
       :raise_errors => false,
       :max_age => 604800, # 1weeks
-      :max_stale => 18000, # 5hour
       :enable_locking => false,
       :lock_expiry_time => 500,
       :lock_retry_delay => 500,
@@ -118,12 +117,8 @@ module Aws::SessionStore::DynamoDB
     attr_reader :error_handler
 
     # @return [Integer] Maximum number of seconds earlier
-    #   from the current time that a session was created.
+    #   from the current time that a session was updated.
     attr_reader :max_age
-
-    # @return [Integer] Maximum number of seconds
-    #   before the current time that the session was last accessed.
-    attr_reader :max_stale
 
     # @return [String] The secret key for HMAC encryption.
     attr_reader :secret_key
@@ -186,9 +181,7 @@ module Aws::SessionStore::DynamoDB
     #   execution of the Aws DynamoDB Session Store Rack Middleware.
     #   For more information see the Handling Errors Section.
     # @option options [Integer] :max_age (nil) Maximum number of seconds earlier
-    #   from the current time that a session was created.
-    # @option options [Integer] :max_stale (nil) Maximum number of seconds
-    #   before current time that session was last accessed.
+    #   from the current time that a session was updated.
     # @option options [String] :secret_key (nil) Secret key for HMAC encription.
     # @option options [Integer] :enable_locking (false) If true, a pessimistic
     #   locking strategy will be implemented for all session accesses.
@@ -223,8 +216,9 @@ module Aws::SessionStore::DynamoDB
       @options.dup
     end
 
-    def dynamodb_cli
-      gen_dynamo_db_client[:dynamo_db_client]
+    def session_tables(opts={})
+      scan_query = { table_name: table_name }.merge(opts)
+      dynamo_db_client.scan(scan_query)
     end
 
     private
