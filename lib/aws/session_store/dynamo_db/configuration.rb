@@ -63,8 +63,8 @@ module Aws::SessionStore::DynamoDB
       :read_capacity => 10,
       :write_capacity => 5,
       :raise_errors => false,
-      :max_age => 7*3600*24,
-      :max_stale => 3600*5,
+      :max_age => 604800, # 1weeks
+      :max_stale => 18000, # 5hour
       :enable_locking => false,
       :lock_expiry_time => 500,
       :lock_retry_delay => 500,
@@ -221,6 +221,10 @@ module Aws::SessionStore::DynamoDB
     # @return [Hash] The merged configuration hash.
     def to_hash
       @options.dup
+    end
+
+    def dynamodb_cli
+      gen_dynamo_db_client[:dynamo_db_client]
     end
 
     private
